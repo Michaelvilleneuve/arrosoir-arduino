@@ -1,9 +1,9 @@
 #include <ESP8266WiFi.h>
-const char* ssid     = "XXX";
-const char* password = "XXX";
-const char* host = "XXX";
-const int sleepTimeS = 10;
+#include <ESP8266HTTPClient.h>
+#include <stdio.h>
 
+const char* ssid     = "xxx";
+const char* password = "xxx";
 const int hygrometer = A0;
 int value;
 
@@ -16,8 +16,9 @@ void setup() {
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-
+  
   WiFi.begin(ssid, password);
+  
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -36,23 +37,16 @@ void loop() {
   value = constrain(value,400,1023);
   value = map(value,400,1023,100,0);
 
-  Serial.println("Soil humidity: ");
-  Serial.print(value);
-  Serial.println("");
-  
-  WiFiClient client;
-  const int httpPort = 80;
-  if (client.connect(host, httpPort)) {
-    String content = "Hey, just testing a post request.";
-    Serial.println("Sending");
-    client.println("POST /p0tt1sp0 HTTP/1.1");
-    client.println("Host: 192.168.1.19:4321");
-    client.println("Accept: */*");
-    client.println("Content-Length: " + content.length());
-    client.println("Content-Type: application/x-www-form-urlencoded");
-    client.println();
-    client.println(content);
-  }
+  String url = "http://xxx";
+  url += value;
+
+  Serial.println("Sending");
+  Serial.println(url);
+  HTTPClient http;
+  http.begin(url);
+  http.addHeader("Content-Type", "application/json");
+  http.POST("");
+  http.end();
 
   delay(30000);
 
